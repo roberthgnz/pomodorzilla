@@ -2,7 +2,18 @@ import { decode } from "js-base64";
 
 const handler = async (req, res) => {
   const { settings } = req.query;
-  const parsedSettings = JSON.parse(decode(settings));
+  const { timer, style } = JSON.parse(decode(settings));
+
+  const toKebabCase = (text) =>
+    text.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
+  const css = Object.keys(style).reduce((acc, key) => {
+    const value = style[key];
+    if (value) {
+      acc += `${toKebabCase(key)}: ${value};`;
+    }
+    return acc;
+  }, "");
 
   const js = `
     const STATES = ["pomodoro", "short-break", "long-break"];
@@ -13,7 +24,7 @@ const handler = async (req, res) => {
         return word.charAt(0).toUpperCase() + word.slice(1);
       }).join(' ');
     };
-    const pomodoro = ${parsedSettings.pomodoro}; // how many minutes in a pomodoro
+    const pomodoro = ${timer.pomodoro}; // how many minutes in a pomodoro
     const now = new Date();
     let end = new Date(now.getTime() + pomodoro * 60000);
     const timer = setInterval(() => {
@@ -25,13 +36,13 @@ const handler = async (req, res) => {
             if (currentSession === "pomodoro") {
                 sessions++;
                 currentSession = STATES[1];
-                end = new Date(now.getTime() + ${parsedSettings.shortBreak} * 60000);
+                end = new Date(now.getTime() + ${timer.shortBreak} * 60000);
                 return;
             }
-            if(currentSession === "short-break" && sessions === ${parsedSettings.longBreakInterval}) {
+            if(currentSession === "short-break" && sessions === ${timer.longBreakInterval}) {
                 sessions = 0;
                 currentSession = STATES[2];
-                end = new Date(now.getTime() + ${parsedSettings.longBreak} * 60000);
+                end = new Date(now.getTime() + ${timer.longBreak} * 60000);
                 return;
             }
             if(currentSession === "short-break" || currentSession === "long-break") {
@@ -61,6 +72,7 @@ const handler = async (req, res) => {
             display: grid;
             place-content: center;
             min-height: 100vh;
+            ${css}
           }
         </style>
     </head>

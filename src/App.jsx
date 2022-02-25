@@ -1,17 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./App.css";
+import { fontAvailable } from "./utils/fonts";
 
 function App() {
   const [config, setConfig] = useState({
-    pomodoro: 25,
-    shortBreak: 5,
-    longBreak: 15,
-    longBreakInterval: 4,
+    timer: {
+      pomodoro: 25,
+      shortBreak: 5,
+      longBreak: 15,
+      longBreakInterval: 4,
+    },
+    style: {
+      fontFamily: "Arial",
+      color: "#000000",
+    },
   });
 
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState("");
+  const [fonts, setFonts] = useState([]);
+
+  useEffect(() => {
+    fontAvailable().then(setFonts);
+  }, []);
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
@@ -28,8 +40,29 @@ function App() {
     setUrl(`${window.location.origin}/api/pomodoro/${data.encodedSettings}`);
   };
 
+  const handleChange = (evt) => {
+    const { name, value } = evt.target;
+    if (name === "fontFamily" || name === "color") {
+      setConfig({
+        ...config,
+        style: {
+          ...config.style,
+          [name]: value,
+        },
+      });
+    } else {
+      setConfig({
+        ...config,
+        timer: {
+          ...config.timer,
+          [name]: parseInt(value),
+        },
+      });
+    }
+  };
+
   return (
-    <>
+    <div className="wrapper">
       <header
         style={{
           display: "flex",
@@ -53,10 +86,9 @@ function App() {
             <input
               type="number"
               id="pomodoro"
-              value={config.pomodoro}
-              onChange={(e) =>
-                setConfig({ ...config, pomodoro: parseInt(e.target.value) })
-              }
+              name="pomodoro"
+              value={config.timer.pomodoro}
+              onChange={handleChange}
             />
           </div>
           <div>
@@ -64,10 +96,9 @@ function App() {
             <input
               type="number"
               id="short-break"
-              value={config.shortBreak}
-              onChange={(e) =>
-                setConfig({ ...config, shortBreak: parseInt(e.target.value) })
-              }
+              name="shortBreak"
+              value={config.timer.shortBreak}
+              onChange={handleChange}
             />
           </div>
           <div>
@@ -75,27 +106,49 @@ function App() {
             <input
               type="number"
               id="long-break"
-              value={config.longBreak}
-              onChange={(e) =>
-                setConfig({ ...config, longBreak: parseInt(e.target.value) })
-              }
+              name="longBreak"
+              value={config.timer.longBreak}
+              onChange={handleChange}
             />
           </div>
         </div>
-        <div>
-          <label htmlFor="long-break-interval">Long Break Interval</label>
-          <input
-            type="number"
-            id="long-break-interval"
-            value={config.longBreakInterval}
-            onChange={(e) =>
-              setConfig({
-                ...config,
-                longBreakInterval: parseInt(e.target.value),
-              })
-            }
-          />
-          <small>(number of pomodoros before a long break)</small>
+        <div className="control-horizontal">
+          <div>
+            <label htmlFor="long-break-interval">Long Break Interval</label>
+            <input
+              type="number"
+              id="long-break-interval"
+              name="longBreakInterval"
+              value={config.timer.longBreakInterval}
+              onChange={handleChange}
+            />
+            <small>(number of pomodoros before a long break)</small>
+          </div>
+          <div>
+            <label htmlFor="font-family">Font</label>
+            <select
+              id="font-family"
+              name="fontFamily"
+              value={config.style.fontFamily}
+              onChange={handleChange}
+            >
+              {fonts.map((font) => (
+                <option key={font} value={font}>
+                  {font}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="color">Color</label>
+            <input
+              type="color"
+              id="color"
+              name="color"
+              value={config.style.color}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <button type="submit" disabled={loading}>
           {loading ? "Generating..." : "Generate url"}
@@ -109,7 +162,7 @@ function App() {
           </p>
         )}
       </form>
-    </>
+    </div>
   );
 }
 
