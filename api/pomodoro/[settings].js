@@ -67,7 +67,7 @@ const handler = async (req, res) => {
             box-sizing: border-box;
           }
           body {
-            font-size: 20vw;
+            font-size: 15vw;
             text-align: center;
             display: grid;
             place-content: center;
