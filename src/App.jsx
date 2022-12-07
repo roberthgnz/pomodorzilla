@@ -75,7 +75,7 @@ function App() {
         }}
       >
         <h1>Pomodorzilla</h1>
-        <a href="https://github.com/eliutdev/pomodorzilla" target="_blank">
+        <a href="https://github.com/HolaSoyGonZzA/pomodorzilla" target="_blank">
           GitHub
         </a>
       </header>
