@@ -17,7 +17,7 @@ function App() {
     },
     style: {
       fontFamily: "Impact",
-      color: "#ffff",
+      color: "#ffffff",
     },
   });
 
@@ -75,9 +75,23 @@ function App() {
         }}
       >
         <h1>Pomodorzilla</h1>
-        <a href="https://github.com/HolaSoyGonZzA/pomodorzilla" target="_blank">
-          GitHub
-        </a>
+        <div>
+          <a
+          style={{
+            marginRight: '1rem'
+          }}
+            href="https://github.com/HolaSoyGonZzA/pomodorzilla"
+            target="_blank"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://twitter.com/HolaSoyGonZzA"
+            target="_blank"
+          >
+            Twitter
+          </a>
+        </div>
       </header>
       <form onSubmit={handleSubmit}>
         <h2>Timer settings</h2>
