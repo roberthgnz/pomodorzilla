@@ -16,6 +16,10 @@ const handler = async (req, res) => {
   }, "");
 
   const js = `
+    const playAudio = () => {
+      const audio = new Audio("/alarm.mp3");
+      audio.addEventListener("canplaythrough", (event) => (audio.play()));
+    }
     const STATE = ["pomodoro", "short-break", "long-break"];
     const STATE_TITLE = {
       "pomodoro": "${timer.pomodoroTitle}",
@@ -37,18 +41,18 @@ const handler = async (req, res) => {
                 sessions++;
                 currentSession = STATE[1];
                 end = new Date(now.getTime() + ${timer.shortBreak} * 60000);
-                return;
+                return playAudio();
             }
             if(currentSession === "short-break" && sessions === ${timer.longBreakInterval}) {
                 sessions = 0;
                 currentSession = STATE[2];
                 end = new Date(now.getTime() + ${timer.longBreak} * 60000);
-                return;
+                return playAudio();
             }
             if(currentSession === "short-break" || currentSession === "long-break") {
                 currentSession = STATE[0];
                 end = new Date(now.getTime() + pomodoro * 60000);
-                return;
+                return playAudio();
             }
         }
       document.getElementById("timer-title").innerHTML = STATE_TITLE[currentSession];
