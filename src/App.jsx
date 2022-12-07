@@ -16,8 +16,8 @@ function App() {
       longBreakInterval: 4,
     },
     style: {
-      fontFamily: "Arial",
-      color: "#000000",
+      fontFamily: "Impact",
+      color: "#ffff",
     },
   });
 
