@@ -16,14 +16,14 @@ const handler = async (req, res) => {
   }, "");
 
   const js = `
-    const STATES = ["pomodoro", "short-break", "long-break"];
+    const STATE = ["pomodoro", "short-break", "long-break"];
+    const STATE_TITLE = {
+      "pomodoro": "${timer.pomodoroTitle}",
+      "short-break": "${timer.shortBreakTitle}",
+      "long-break": "${timer.longBreakTitle}"
+    }
     let sessions = 0;
-    let currentSession = STATES[0];
-    const capitalize = text => {
-      return text.split('-').map(word => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      }).join(' ');
-    };
+    let currentSession = STATE[0];
     const pomodoro = ${timer.pomodoro}; // how many minutes in a pomodoro
     const now = new Date();
     let end = new Date(now.getTime() + pomodoro * 60000);
@@ -35,23 +35,23 @@ const handler = async (req, res) => {
       if (minutes < 0) {
             if (currentSession === "pomodoro") {
                 sessions++;
-                currentSession = STATES[1];
+                currentSession = STATE[1];
                 end = new Date(now.getTime() + ${timer.shortBreak} * 60000);
                 return;
             }
             if(currentSession === "short-break" && sessions === ${timer.longBreakInterval}) {
                 sessions = 0;
-                currentSession = STATES[2];
+                currentSession = STATE[2];
                 end = new Date(now.getTime() + ${timer.longBreak} * 60000);
                 return;
             }
             if(currentSession === "short-break" || currentSession === "long-break") {
-                currentSession = STATES[0];
+                currentSession = STATE[0];
                 end = new Date(now.getTime() + pomodoro * 60000);
                 return;
             }
         }
-      document.getElementById("timer-title").innerHTML = capitalize(currentSession);
+      document.getElementById("timer-title").innerHTML = STATE_TITLE[currentSession];
       document.getElementById("timer-text").innerHTML = String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
     }, 1000);
   `;
@@ -61,7 +61,6 @@ const handler = async (req, res) => {
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>pomodorzilla</title>
         <style>
           * {
             box-sizing: border-box;

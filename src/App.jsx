@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import "./App.css";
+import { Preview } from "./Preview/Preview";
 import { fontAvailable } from "./utils/fonts";
 
 function App() {
@@ -9,6 +10,9 @@ function App() {
       pomodoro: 25,
       shortBreak: 5,
       longBreak: 15,
+      pomodoroTitle: "Pomodoro",
+      shortBreakTitle: "Short Break",
+      longBreakTitle: "Long Break",
       longBreakInterval: 4,
     },
     style: {
@@ -55,7 +59,7 @@ function App() {
         ...config,
         timer: {
           ...config.timer,
-          [name]: parseInt(value),
+          [name]: value,
         },
       });
     }
@@ -114,6 +118,38 @@ function App() {
         </div>
         <div className="control-horizontal">
           <div>
+            <label htmlFor="pomodoro-title">Pomodoro Title</label>
+            <input
+              type="text"
+              id="pomodoro-title"
+              name="pomodoroTitle"
+              value={config.timer.pomodoroTitle}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="short-break-title">Short Break Title</label>
+            <input
+              type="text"
+              id="short-break-title"
+              name="shortBreakTitle"
+              value={config.timer.shortBreakTitle}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="long-break-title">Long Break Title</label>
+            <input
+              type="text"
+              id="long-break-title"
+              name="longBreakTitle"
+              value={config.timer.longBreakTitle}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <div className="control-horizontal">
+          <div>
             <label htmlFor="long-break-interval">Long Break Interval</label>
             <input
               type="number"
@@ -153,6 +189,7 @@ function App() {
         <button type="submit" disabled={loading}>
           {loading ? "Generating..." : "Generate url"}
         </button>
+        <Preview title={config.timer.pomodoroTitle} style={config.style} />
         {url && (
           <p className="url">
             <small>
